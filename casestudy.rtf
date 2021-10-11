@@ -1,0 +1,245 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
+{\*\generator Riched20 10.0.19041}\viewkind4\uc1 
+\pard\sa200\sl276\slmult1\f0\fs22\lang9    import javax.swing.*;\par
+import java.nio.charset.StandardCharsets;\par
+import java.sql.*;\par
+import java.util.Scanner;\par
+\par
+public class BookStoreCaseStudy implements UserInterface,BookInterface,CartInterface\{\par
+    static Scanner sc = new Scanner(System.in);\par
+    private static Connection con;\par
+    private static Statement stm;\par
+    public static void main(String[] args) throws SQLException \{\par
+        try \{\par
+            String address = "jdbc:mysql://localhost:3306/caseStudy";\par
+            String user = "root";\par
+            String pass = "root";\par
+            Class.forName("com.mysql.cj.jdbc.Driver");\par
+            con = DriverManager.getConnection(address, user, pass);\par
+            stm = con.createStatement();\par
+            Options op=new Options();\par
+            op.choseOption();\par
+        \} catch (ClassNotFoundException | SQLException e) \{\par
+            e.printStackTrace();\par
+        \} finally \{\par
+            con.close();\par
+        \}\par
+    \}\par
+    public static void addUser() throws SQLException \{\par
+        System.out.println("Enter user id:");\par
+        int u_id = sc.nextInt();\par
+        System.out.println("Enter userName :");\par
+        String user_name = sc.next();\par
+        System.out.println("Enter password :");\par
+        String pass = sc.next();\par
+        System.out.println("Enter place :");\par
+        String place = sc.next();\par
+        String sqlInsert = "insert into user values(?,?,?,?)";\par
+        PreparedStatement pstm = con.prepareStatement(sqlInsert);\par
+        pstm.setInt(1, u_id);\par
+        pstm.setString(2, user_name);\par
+        pstm.setString(3, pass);\par
+        pstm.setString(4, place);\par
+        int status = pstm.executeUpdate();\par
+        if (status == 0) \{\par
+            System.out.println("Enter different user id ");\par
+        \} else \{\par
+            System.out.println("Insertion done ");\par
+        \}\par
+    \}\par
+    public static void displayUsers() throws SQLException \{\par
+        String sqlQuery = "select * from user";\par
+        ResultSet res = stm.executeQuery(sqlQuery);\par
+        while (res.next()) \{\par
+            System.out.println("User ID :" + res.getInt(1) + "\\tUser Name :" + res.getString(2) + "\\tPassword :" + res.getString(3) + "\\tPlace :" + res.getString(4));\par
+        \}\par
+    \}\par
+        public static void deleteUser() throws SQLException \{\par
+            System.out.println("Enter the user id to delete the user");\par
+            int u_id=sc.nextInt();\par
+            String sqlDelete="delete from user where u_id="+u_id+"";\par
+            int deleteStatus=stm.executeUpdate(sqlDelete);\par
+            if(deleteStatus==0)\{\par
+                System.out.println("Enter the name which is present in database ");\par
+            \}else \{\par
+                System.out.println("Deletion done ");\par
+            \}\par
+        \}\par
+    public static void updateUser() throws SQLException \{\par
+        System.out.println("Enter the user id to update the user name ");\par
+        int u_id=sc.nextInt();\par
+        System.out.println("Enter new name: ");\par
+        String newName= sc.next();\par
+        String sqlUpdate="update user set userName='"+newName+"' where u_id="+u_id+"";\par
+        int updateStatus=stm.executeUpdate(sqlUpdate);\par
+        if(updateStatus==0)\{\par
+            System.out.println("Enter the user id which is present in database ");\par
+        \}else \{\par
+            System.out.println("Update done ");\par
+        \}\par
+    \}\par
+    public static void addBook() throws SQLException \{\par
+        System.out.println("Enter Book Name :");\par
+        String bookName = sc.next();\par
+        System.out.println("Enter Prize of book :");\par
+        int prize = sc.nextInt();\par
+        System.out.println("Enter Number of copies :");\par
+        int noOfCopies = sc.nextInt();\par
+        System.out.println("Enter Author of book :");\par
+        String author = sc.next();\par
+        System.out.println("Enter Year of publish:");\par
+        int yearOfPublish = sc.nextInt();\par
+        String sqlInsert = "insert into book values(?,?,?,?,?)";\par
+        PreparedStatement pstm = con.prepareStatement(sqlInsert);\par
+        pstm.setString(1, bookName);\par
+        pstm.setInt(2, prize);\par
+        pstm.setInt(3, noOfCopies);\par
+        pstm.setString(4, author);\par
+        pstm.setInt(5, yearOfPublish);\par
+        int status = pstm.executeUpdate();\par
+        if (status == 0) \{\par
+            System.out.println("Enter different Book Name ");\par
+        \} else \{\par
+            System.out.println("Insertion done ");\par
+        \}\par
+    \}\par
+    public static void displayBooks() throws SQLException \{\par
+        String sqlQuery = "select * from book";\par
+        ResultSet res = stm.executeQuery(sqlQuery);\par
+        while (res.next()) \{\par
+            System.out.println("Book name :" + res.getString(1) + "\\tprize :" + res.getInt(2) + "\\tNumber of copies : :" + res.getInt(3) + "\\tWriter :" + res.getString(4) +"\\tYear of publish :" + res.getInt(5));\par
+        \}\par
+    \}\par
+    public static void deleteBooks() throws SQLException \{\par
+        System.out.println("Enter the book name to delete the book");\par
+        String bookName=sc.next();\par
+        String sqlDelete="delete from book where bookName='"+bookName+"'";\par
+        int deleteStatus=stm.executeUpdate(sqlDelete);\par
+        if(deleteStatus==0)\{\par
+            System.out.println("Enter the Book name which is present in database ");\par
+        \}else \{\par
+            System.out.println("Deletion done ");\par
+        \}\par
+    \}\par
+    public static void updateBook() throws SQLException \{\par
+        System.out.println("Enter the book name to change the author");\par
+        String  bookName = sc.next();\par
+        System.out.println("Enter new name: ");\par
+        String author = sc.next();\par
+        String sqlUpdate = "update book set author='"+author+"' where bookName='" + bookName + "'";\par
+        int updateStatus = stm.executeUpdate(sqlUpdate);\par
+        if (updateStatus == 0) \{\par
+            System.out.println("Enter the book which is present in database ");\par
+        \} else \{\par
+            System.out.println("Update done ");\par
+        \}\par
+    \}\par
+    public static int validateUser() throws SQLException \{\par
+        int count=0;\par
+        System.out.println("Enter user id to check whether the user is present or not :");\par
+        int u_id=sc.nextInt();\par
+        String sqlCheck="select userName from user where u_id="+u_id+"";\par
+        ResultSet res=stm.executeQuery(sqlCheck);\par
+        while (res.next())\{\par
+            count++;\par
+        \}\par
+        if(count>=1)\{\par
+            System.out.println("user is present and can perform task");\par
+        \}\par
+        return count;\par
+    \}\par
+//    public static int validateBook() throws SQLException \{\par
+//        int count=0;\par
+//        System.out.println("Enter Book to check whether the book present or not :");\par
+//        String  bookName=sc.next();\par
+//        String sqlCheck="select bookName from book where bookName='"+bookName+"'";\par
+//        ResultSet res=stm.executeQuery(sqlCheck);\par
+//        while (res.next())\{\par
+//            count++;\par
+//        \}\par
+//        if(count>=1)\{\par
+//            System.out.println("Book is present and can perform task");\par
+//        \}\par
+//        return count;\par
+//    \}\par
+    public static void addBookToCart() throws SQLException \{\par
+        int noOfCopies = 0;\par
+        System.out.println("Enter the user_id");\par
+        int u_id = sc.nextInt();\par
+        System.out.println("Enter book Name to add in cart");\par
+        String bookName = sc.next();\par
+        System.out.println("Enter no fo copies to add in cart");\par
+        int addCopies = sc.nextInt();\par
+        String checkCopies = "select noOfCopies from book where bookName='" + bookName + "'";\par
+        ResultSet resNoOfCopies = stm.executeQuery(checkCopies);\par
+        while (resNoOfCopies.next()) \{\par
+            noOfCopies = resNoOfCopies.getInt(1);\par
+        \}\par
+        if (noOfCopies >= addCopies) \{\par
+            String sqlInsertBookInCart = "insert into cart values('" + bookName + "'," + u_id + "," + addCopies + ")";\par
+            int status = stm.executeUpdate(sqlInsertBookInCart);\par
+            noOfCopies=noOfCopies-addCopies;\par
+            if (status == 0) \{\par
+                System.out.println("Enter different Book Name ");\par
+            \} else \{\par
+                System.out.println("Insertion into cart done ");\par
+            \}\par
+            if (status > 0) \{\par
+                if (noOfCopies > 0) \{\par
+                    String decrementCopies = "update book set noOfCopies=" + noOfCopies + " where bookName='" + bookName + "'";\par
+                    stm.executeUpdate(decrementCopies);\par
+                \} else \{\par
+                    String deleteBook = "delete from book where bookName='" + bookName + "'";\par
+                    stm.executeUpdate(deleteBook);\par
+                \}\par
+            \}\par
+        \}\par
+        else \{\par
+            System.out.println("Book not present");\par
+        \}\par
+    \}\par
+\par
+    public static void displayBookFromCart() throws SQLException \{\par
+        System.out.println("Enter u_id to show the data");\par
+        int u_id=sc.nextInt();\par
+        String sqlDisplayCart="select bookName,noOfCopies from cart where u_id="+u_id+"";\par
+        ResultSet res=stm.executeQuery(sqlDisplayCart);\par
+        while (res.next())\{\par
+            System.out.println("Book Name: "+res.getString(1)+" No of Copies: "+res.getInt(2));\par
+        \}\par
+    \}\par
+\par
+    public static void deleteBookFromCart() throws SQLException \{\par
+        int noOfCopies=0;\par
+        int  bookCopies=0;\par
+        System.out.println("Enter u_id");\par
+        int u_id=sc.nextInt();\par
+        System.out.println("Enter book name to delete from cart");\par
+        String bookName=sc.next();\par
+        String queryCheck="select noOfCopies from cart where u_id="+u_id+" and bookName='"+bookName+"'";\par
+        ResultSet res=stm.executeQuery(queryCheck);\par
+        while (res.next())\{\par
+            noOfCopies=noOfCopies+res.getInt(1);\par
+        \}\par
+        String deleteBook="delete from cart where u_id="+u_id+" and bookName='"+bookName+"'";\par
+        int status=stm.executeUpdate(deleteBook);\par
+        if(status>0)\{\par
+            System.out.println("Deletion done in cart");\par
+            String checkCopiesInBook="select noOfCopies from book where bookName='"+bookName+"'";\par
+            ResultSet resCheck=stm.executeQuery(checkCopiesInBook);\par
+            while (resCheck.next())\{\par
+                bookCopies=resCheck.getInt(1);\par
+            \}\par
+            bookCopies=bookCopies+noOfCopies;\par
+\par
+            String updateBook="update book set noOfCopies="+bookCopies+" where bookName='"+bookName+"'";\par
+            stm.executeUpdate(updateBook);\par
+        \}\par
+        else \{\par
+            System.out.println("Book not present in cart");\par
+        \}\par
+    \}\par
+\par
+\}\par
+}
+ 
